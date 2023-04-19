@@ -6,65 +6,85 @@
 
 #define UNUSED(x) (void)x
 
-/**
- * opaque type definition for a queue
- */
-typedef struct queue* queue_t;
+struct node
+{
+    void *data;
+    struct node *next;
+};
 
-/**
- * Initialize a new queue
- * @param capacity the maximum capacity of the queue
- * @return A fully initialized queue
- */
-LAB_EXPORT queue_t queue_init(int capacity){
-    UNUSED(capacity);
-    return 0;
+struct queue
+{
+    int capacity;
+    int size;
+    bool shutdown;
+    pthread_mutex_t lock;
+    pthread_cond_t empty;
+    pthread_cond_t full;
+    struct node *head;
+    struct node *tail;
+};
 
+
+LAB_EXPORT queue_t queue_init(int capacity)
+{
+    queue_t q = (queue_t) malloc(sizeof(struct queue));
+    q->capacity = capacity;
+    q->size = 0;
+    q->head = q->tail = NULL;
+    pthread_mutex_init(&q->lock, NULL);
+    pthread_cond_init(&q->empty, NULL);
+    pthread_cond_init(&q->full, NULL);
+    return q;
 }
 
 /**
  * Frees all memory and related data signals all waiting threads.
  * @param q a queue to free
  */
-LAB_EXPORT void queue_destroy(queue_t q){
+LAB_EXPORT void queue_destroy(queue_t q)
+{
     UNUSED(q);
 }
 
 /**
- * Adds an element to the back of the queue 
+ * Adds an element to the back of the queue
  * @param q the queue
  * @param block if true calling thread will block if q is full
  * @param data the data to add
  */
-LAB_EXPORT void enqueue(queue_t q, void *data){
+LAB_EXPORT void enqueue(queue_t q, void *data)
+{
     UNUSED(q);
     UNUSED(data);
 }
 
-
 /**
  * Removes the first element in the queue.
- * @param q the queue 
+ * @param q the queue
  * @param block if true calling thread will block if q is empty
  */
-LAB_EXPORT void * dequeue(queue_t q){
+LAB_EXPORT void *dequeue(queue_t q)
+{
     UNUSED(q);
     return 0;
 }
 
-/**
- * Returns true is the queue is empty
- * @param q the queue
- */
-LAB_EXPORT bool is_empty(queue_t q){
-    UNUSED(q);
-    return true;
+
+LAB_EXPORT bool is_empty(queue_t q)
+{
+    pthread_mutex_lock(&q->lock);
+    return q->size==0;
+    pthread_mutex_unlock(&q->lock);
+    
 }
 
-/**
- * Set the shutdown flag in the queue so all threads can 
- * complete and exit properly
- */
-LAB_EXPORT void queue_shutdown(queue_t q){
-    UNUSED(q);
+
+LAB_EXPORT void queue_shutdown(queue_t q)
+{
+    pthread_mutex_lock(&q->lock);
+    q->shutdown=true;
+    pthread_cond_broadcast(&q->empty);
+    pthread_cond_broadcast(&q->full);
+    pthread_mutex_unlock(&q->lock);
+ 
 }
