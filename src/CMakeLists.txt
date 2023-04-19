@@ -4,6 +4,7 @@ else()
   add_library(lab SHARED lab.cpp)
 endif()
 
+find_package(Threads)
 
 ## Add address sanatizers for debug build only!
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -29,7 +30,8 @@ target_compile_options(lab PRIVATE
 
 
 add_executable(myprogram main.cpp)
-target_link_libraries(myprogram PRIVATE lab)
+target_link_libraries(myprogram PRIVATE lab
+${CMAKE_THREAD_LIBS_INIT})
 
 install(TARGETS lab DESTINATION lib)
 install(FILES lab.h DESTINATION include)
