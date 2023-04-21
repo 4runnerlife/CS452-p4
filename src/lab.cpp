@@ -61,8 +61,7 @@ LAB_EXPORT void enqueue(queue_t q, void *data)
     q->tail->next = temp;
     q->tail = temp;
     pthread_mutex_unlock(&q->lock);
-    // UNUSED(q);
-    // UNUSED(data);
+    
 }
 
 /**
@@ -72,8 +71,18 @@ LAB_EXPORT void enqueue(queue_t q, void *data)
  */
 LAB_EXPORT void *dequeue(queue_t q)
 {
-    UNUSED(q);
-    return 0;
+    pthread_mutex_lock(&q->lock);
+    node *temp = q->head;
+    node *newNode = temp->next;
+    if(newNode == NULL){
+        pthread_mutex_unlock(&q->lock);
+        //return 1;
+    }
+    q->head = newNode;
+    pthread_mutex_unlock(&q->lock);
+    free(temp);
+
+     return 0;
 }
 
 
