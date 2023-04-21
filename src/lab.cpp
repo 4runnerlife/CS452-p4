@@ -54,8 +54,15 @@ LAB_EXPORT void queue_destroy(queue_t q)
  */
 LAB_EXPORT void enqueue(queue_t q, void *data)
 {
-    UNUSED(q);
-    UNUSED(data);
+    node *temp = (node *)malloc(sizeof(node));
+    temp->data = data;
+    temp->next = NULL;
+    pthread_mutex_lock(&q->lock);
+    q->tail->next = temp;
+    q->tail = temp;
+    pthread_mutex_unlock(&q->lock);
+    // UNUSED(q);
+    // UNUSED(data);
 }
 
 /**
