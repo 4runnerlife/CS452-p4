@@ -43,7 +43,14 @@ LAB_EXPORT queue_t queue_init(int capacity)
  */
 LAB_EXPORT void queue_destroy(queue_t q)
 {
-    UNUSED(q);
+    pthread_mutex_lock(&q->lock);
+    while(q->size !=0){
+        dequeue(q);
+    }
+    pthread_cond_broadcast(&q->empty);
+    pthread_cond_broadcast(&q->full);
+    pthread_mutex_unlock(&q->lock);
+    
 }
 
 /**
@@ -80,6 +87,7 @@ LAB_EXPORT void *dequeue(queue_t q)
     }
     q->head = newNode;
     pthread_mutex_unlock(&q->lock);
+    free(temp->data);
     free(temp);
 
      return 0;
