@@ -64,10 +64,12 @@ LAB_EXPORT void enqueue(queue_t q, void *data)
     node *temp = (node *)malloc(sizeof(node));
     temp->data = data;
     temp->next = NULL;
+    //fprintf(stderr, "enqueue 1\n");
     pthread_mutex_lock(&q->lock);
     q->tail->next = temp;
     q->tail = temp;
     pthread_mutex_unlock(&q->lock);
+    //fprintf(stderr, "enqueue 2");
     
 }
 
@@ -78,19 +80,21 @@ LAB_EXPORT void enqueue(queue_t q, void *data)
  */
 LAB_EXPORT void *dequeue(queue_t q)
 {
+   // fprintf(stderr, "dequeue 1\n");
     pthread_mutex_lock(&q->lock);
     node *temp = q->head;
     node *newNode = temp->next;
     if(newNode == NULL){
         pthread_mutex_unlock(&q->lock);
-        //return 1;
+      
     }
+   // fprintf(stderr, "dequeue 2");
     q->head = newNode;
     pthread_mutex_unlock(&q->lock);
     free(temp->data);
     free(temp);
-
-     return 0;
+   // fprintf(stderr, "dequeue 3");
+    return q;
 }
 
 
