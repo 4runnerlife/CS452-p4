@@ -28,9 +28,11 @@ struct queue
 LAB_EXPORT queue_t queue_init(int capacity)
 {
     queue_t q = (queue_t) malloc(sizeof(struct queue));
+    node *temp = (node *)malloc(sizeof(node));
+    temp->next=NULL;
     q->capacity = capacity;
-    q->size = 0;
-    q->head = q->tail = NULL;
+    q->size = 1;
+    q->head = q->tail = temp;
     pthread_mutex_init(&q->lock, NULL);
     pthread_cond_init(&q->empty, NULL);
     pthread_cond_init(&q->full, NULL);
@@ -68,6 +70,8 @@ LAB_EXPORT void enqueue(queue_t q, void *data)
     pthread_mutex_lock(&q->lock);
     q->tail->next = temp;
     q->tail = temp;
+    q->size = q->size+1;
+
     pthread_mutex_unlock(&q->lock);
     //fprintf(stderr, "enqueue 2");
     
@@ -89,10 +93,12 @@ LAB_EXPORT void *dequeue(queue_t q)
       
     }
    // fprintf(stderr, "dequeue 2");
-    q->head = newNode;
+    q->head = newNode; 
+    q->size = q->size-1;
     pthread_mutex_unlock(&q->lock);
-    free(temp->data);
     free(temp);
+
+   
    // fprintf(stderr, "dequeue 3");
     return q;
 }
