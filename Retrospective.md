@@ -1,16 +1,16 @@
 # Retrospective
 
-- name: TODO
-- email: TODO
+- name: Matt Rockenhaus
+- email: matthewrockenhaus@u.boisestate.edu
 
 ## Learning
 
-TODO - Detail one new thing that you learned when working on this project.
+I learned a lot about multithreaded programs.  More specificaly how to lock/unlock and broadcast to make things work
 
 ## Known issues or Bugs
 
-TODO - Detail any bugs that you could not solve before the deadline.
+The program currently segfaults.  I am not entirly sure why this is happening but I think with a few more days I could get this to work.
 
 ## Sources used
 
-TODO - List any sources you used when working on this project.
+Class notes and the textbook.
