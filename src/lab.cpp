@@ -5,13 +5,18 @@
 #include "lab.h"
 
 #define UNUSED(x) (void)x
-
+/**
+ * Struct for the node that make up the queue
+*/
 struct node
 {
     void *data;
     struct node *next;
 };
 
+/**
+ * Struct for the queue
+*/
 struct queue
 {
     int capacity;
@@ -24,7 +29,9 @@ struct queue
     struct node *tail;
 };
 
-
+/**
+ * Create the initial queue
+*/
 LAB_EXPORT queue_t queue_init(int capacity)
 {
     queue_t q = (queue_t) malloc(sizeof(struct queue));
@@ -41,7 +48,6 @@ LAB_EXPORT queue_t queue_init(int capacity)
 
 /**
  * Frees all memory and related data signals all waiting threads.
- * @param q a queue to free
  */
 LAB_EXPORT void queue_destroy(queue_t q)
 {
@@ -56,10 +62,7 @@ LAB_EXPORT void queue_destroy(queue_t q)
 }
 
 /**
- * Adds an element to the back of the queue
- * @param q the queue
- * @param block if true calling thread will block if q is full
- * @param data the data to add
+ * Allows the user to add an element to the queue
  */
 LAB_EXPORT void enqueue(queue_t q, void *data)
 {
@@ -78,10 +81,8 @@ LAB_EXPORT void enqueue(queue_t q, void *data)
 }
 
 /**
- * Removes the first element in the queue.
- * @param q the queue
- * @param block if true calling thread will block if q is empty
- */
+ * Alolows the user to remove an element from the queue
+*/
 LAB_EXPORT void *dequeue(queue_t q)
 {
    // fprintf(stderr, "dequeue 1\n");
@@ -103,7 +104,9 @@ LAB_EXPORT void *dequeue(queue_t q)
     return q;
 }
 
-
+/**
+ * This is a simple check to see if the queue is empty 
+*/
 LAB_EXPORT bool is_empty(queue_t q)
 {
     pthread_mutex_lock(&q->lock);
@@ -112,7 +115,9 @@ LAB_EXPORT bool is_empty(queue_t q)
     
 }
 
-
+/**
+ * Shuts down the queue
+*/
 LAB_EXPORT void queue_shutdown(queue_t q)
 {
     pthread_mutex_lock(&q->lock);
